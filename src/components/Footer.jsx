@@ -41,7 +41,7 @@ const Footer = () => {
 
               <li>
                 <a
-                  href="https://www.instagram.com/calyaancol/"
+                  href="https://www.instagram.com/cuidafy/"
                   target="_blank"
                   rel="noreferrer"
                   className="transition hover:text-white/75"
@@ -53,7 +53,7 @@ const Footer = () => {
 
               <li>
                 <a
-                  href="https://www.youtube.com/channel/UCJNVxAjRm23sU7Q8ylvYxWA"
+                  href="https://www.youtube.com/"
                   target="_blank"
                   rel="noreferrer"
                   className="transition hover:text-white/75"
@@ -65,7 +65,7 @@ const Footer = () => {
 
               <li>
                 <a
-                  href="https://co.pinterest.com/calyaancol/_created/"
+                  href="https://co.pinterest.com/"
                   target="_blank"
                   rel="noreferrer"
                   className="transition hover:text-white/75"
@@ -163,7 +163,7 @@ const Footer = () => {
         <div className="mt-12 border-t border-white/10 pt-6">
           <div className="text-center sm:flex sm:justify-between sm:text-left">
             <p className="mt-4 text-sm text-white/75 sm:order-first sm:mt-0">
-              Copyright &copy; 2026 Cuidafy
+              Copyright &copy; 2026 Cuidafy By toledoconsultora.com
             </p>
           </div>
         </div>

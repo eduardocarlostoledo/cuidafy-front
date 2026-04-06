@@ -54,8 +54,8 @@ const Header = () => {
                 effect="blur"
                 width="150"
                 height="80"
-                alt="Logo Calyaan"
-                src="https://calyaan.b-cdn.net/wp-content/uploads/2022/01/Logo-Calyaan2.png"
+                alt="Logo Cuidafy"
+                src="https://calyaan.b-cdn.net/wp-content/uploads/2022/01/Logo-Cuidafy2.png"
               />
             </Link>
 

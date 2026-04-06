@@ -9,7 +9,7 @@ const Favorites = () => {
                     <div className="mb-4">
                         <p className="font-medium text-xl mb-2">Favoritos</p>
                         <p className='text-gray-600 leading-loose'>
-                            Visualiza todos los servicios que más te gustan y disfruta de todos los beneficios de pertenecer a la familia de Calyaan.</p>
+                            Visualiza todos los servicios que más te gustan y disfruta de todos los beneficios de pertenecer a la familia de Cuidafy.</p>
                     </div>
 
                     <div className="lg:col-span-2">

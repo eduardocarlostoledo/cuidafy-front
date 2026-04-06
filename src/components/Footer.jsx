@@ -16,20 +16,20 @@ const Footer = () => {
               <img
                 width="289"
                 height="153"
-                alt="Logo Calyaan"
+                alt="Logo Cuidafy"
                 src="https://calyaan.b-cdn.net/wp-content/uploads/2021/11/RecursoRecurso-3-.png"
               />
             </div>
 
             <p className="mt-6 max-w-md text-sm leading-6 text-white/75">
-              Calyaan se presenta aquí como hub de cuidado: una entrada guiada para encontrar,
+              Cuidafy se presenta aquí como hub de cuidado: una entrada guiada para encontrar,
               comparar y coordinar acompañamiento con más contexto y menos fricción.
             </p>
 
             <ul className="mt-8 flex justify-center gap-6 sm:justify-start md:gap-8">
               <li>
                 <a
-                  href="https://www.facebook.com/Calyaan-105376747798392"
+                  href="https://www.facebook.com/Cuidafy-105376747798392"
                   target="_blank"
                   rel="noreferrer"
                   className="transition hover:text-white/75"
@@ -163,7 +163,7 @@ const Footer = () => {
         <div className="mt-12 border-t border-white/10 pt-6">
           <div className="text-center sm:flex sm:justify-between sm:text-left">
             <p className="mt-4 text-sm text-white/75 sm:order-first sm:mt-0">
-              Copyright &copy; 2026 Calyaan
+              Copyright &copy; 2026 Cuidafy
             </p>
           </div>
         </div>

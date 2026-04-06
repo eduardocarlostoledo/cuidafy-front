@@ -131,7 +131,7 @@ const ProductExpanded = ({
                   fontSize: "17px",
                 }}
               >
-                Porcentaje Calyaan: {input.porcentajeCaalyan}
+                Porcentaje Cuidafy: {input.porcentajeCaalyan}
               </p>
               <p
                 className="PDivInfo"

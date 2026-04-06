@@ -111,7 +111,7 @@ Dashboard → Productos → Tabla → [Crear/Editar/Eliminar]
 **→ `/productos`**
 - Ves catálogo de productos
 - Puedes ir directamente a compra en web
-- No integrado con checkout de Calyaan (aún)
+- No integrado con checkout de Cuidafy (aún)
 
 ### Para GESTIONAR PRODUCTOS (Admin):
 **→ Dashboard → Productos (`/set-productos`)**
@@ -160,7 +160,7 @@ Dashboard → Productos → Tabla → [Crear/Editar/Eliminar]
    ↓
 3. Hace click en producto
    ↓
-4. Lo lleva a web de Calyaan (link externo)
+4. Lo lleva a web de Cuidafy (link externo)
 ```
 
 ### Escenario 3: ADMIN GESTIONA PRODUCTOS
@@ -195,7 +195,7 @@ Dashboard → Productos → Tabla → [Crear/Editar/Eliminar]
 /productos 
   ├─ Fetch desde /api/products
   ├─ Grid de cards
-  └─ Link a web (no integrado con checkout Calyaan)
+  └─ Link a web (no integrado con checkout Cuidafy)
 ```
 
 ### ⚠️ MEJORA PENDIENTE

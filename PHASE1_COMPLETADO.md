@@ -185,7 +185,7 @@ useEffect(() => {
 
 ### URLs de Imágenes
 Actualmente usa `via.placeholder.com` para todas las imágenes.
-**Antes de producción**, reemplazar con URLs reales de Calyaan:
+**Antes de producción**, reemplazar con URLs reales de Cuidafy:
 ```javascript
 // En src/data/especialidadImagenes.js
 "Apoyo a la familia del paciente": "https://calyaan.com/img/apoyo-familia.jpg",

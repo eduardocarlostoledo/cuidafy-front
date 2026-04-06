@@ -9,7 +9,7 @@ const Fidelidad = () => {
           <div className="mb-4">
             <p className="font-medium text-xl mb-2">Fidelidad</p>
             <p className="text-gray-600 leading-loose">
-            Es vital para las profesionales y para Calyaan
+            Es vital para las profesionales y para Cuidafy
             fomentar la recompra, es por esto que se premiará a
             las profesionales que mayor número de recompras
             generen.
@@ -28,7 +28,7 @@ const Fidelidad = () => {
                   <div role="cell" className="bg-gray-50">
                     <div className="bg-gray-50 p-5 rounded-md relative h-full w-full">
                       <h1 className="pb-4 text-2xl font-semibold">
-                        Fidelidad Calyaan
+                        Fidelidad Cuidafy
                       </h1>
                       <div className="my-5">
                     

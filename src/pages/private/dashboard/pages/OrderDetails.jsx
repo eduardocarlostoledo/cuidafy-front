@@ -374,7 +374,7 @@ const OrderDetails = () => {
                                         </tr>
                                         <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
                                             <td className="pr-3 py-3 font-normal text-[#55585B] text-start">
-                                                Ganancia Calyaan: % 65
+                                                Ganancia Cuidafy: % 65
                                             </td>
                                             <td className="px-3 py-3 text-[#55585B] text-end text-lg font-semibold">
                                                 $1310.55

@@ -80,7 +80,7 @@ const MyDocument = ({ afipResponse, Orden, record }) => (
     <Page size="A4" style={styles.page}>
       <View style={styles.divFull}>
         <View style={styles.nav}>
-          <Text style={styles.navText}>Calyaan</Text>
+          <Text style={styles.navText}>Cuidafy</Text>
         </View>
 
         <View style={styles.section}>

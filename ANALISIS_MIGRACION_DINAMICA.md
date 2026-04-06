@@ -140,7 +140,7 @@ Pages.jsx (checkout/pago)
       img: "https://...",
       link: "https://...",
       cantidad: 1,
-      porcetajeCalyaan: 39,
+      porcetajeCuidafy: 39,
       porcetajeProfesional: 61
     }
   ],

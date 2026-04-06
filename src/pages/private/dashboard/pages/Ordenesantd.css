@@ -1,0 +1,114 @@
+.productExpandedDiv {
+  flex-wrap: wrap;
+}
+
+/* .productExpandedDiv {
+    display: flex;
+    justify-content: space-around;
+    min-height: 250px;
+    align-items: center;
+} */
+
+.NameImgDivInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.ImgDivInfo {
+  margin: 20px;
+  width: 220px;
+  border-radius: 10px;
+}
+
+.DataDivInfo {
+  width: 70%;
+}
+
+.BrandTypeDivInfo {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: rgba(225, 182, 255, 0.759);
+}
+
+.PDivInfo {
+  margin: 10px;
+  font-size: 25px;
+}
+
+.NameImgDiv {
+  flex-wrap: wrap;
+
+  /* display: flex;
+    flex-direction: column; */
+}
+
+.restoDePropsDiv {
+  display: flex;
+  flex-direction: column;
+}
+
+.InputsEdits {
+  flex-wrap: wrap;
+  width: 60%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  box-sizing: border-box;
+}
+
+.inputNew {
+  margin: 5px;
+}
+
+.ButtonDiv {
+  display: flex;
+  align-items: center;
+}
+
+.ButtonSubmit {
+  background-color: #4caf50;
+  color: white;
+  padding: 7px 15px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ButtonSubmit:hover {
+  background-color: #3d8f41;
+}
+
+.ActionsDiv {
+  display: flex;
+  justify-content: space-around;
+}
+
+.ButtonsActions {
+  border: none;
+  border-radius: 10px;
+  height: 40px;
+  width: 60px;
+}
+
+.IconReactClose {
+  color: red;
+}
+
+.LabelNameImg {
+  flex-wrap: wrap;
+  width: 30%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  box-sizing: border-box;
+}

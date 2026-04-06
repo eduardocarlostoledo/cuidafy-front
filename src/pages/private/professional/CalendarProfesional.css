@@ -1,0 +1,270 @@
+/* Optimizaciones generales del calendario */
+.rbc-calendar {
+  font-size: 0.875rem;
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 640px) {
+  .rbc-calendar {
+    font-size: 0.75rem;
+  }
+
+  .rbc-toolbar {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .rbc-toolbar button {
+    padding: 4px 8px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .rbc-header {
+    padding: 4px 2px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .rbc-today {
+    background-color: #e0f2fe;
+  }
+
+  .rbc-off-range-bg {
+    background-color: #fafafa;
+  }
+
+  .rbc-date-cell {
+    padding: 2px;
+    text-align: center;
+  }
+
+  .rbc-event {
+    padding: 1px !important;
+    margin: 1px 0 !important;
+  }
+
+  .rbc-event-content {
+    font-size: 0.65rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .rbc-day-cell {
+    min-height: 60px;
+    padding: 2px;
+  }
+
+  .rbc-week-header {
+    margin-bottom: 4px;
+  }
+}
+
+/* Pantallas medianas y grandes */
+@media (min-width: 641px) {
+  .rbc-toolbar {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .rbc-toolbar button {
+    padding: 6px 12px !important;
+    margin: 0 4px;
+  }
+
+  .rbc-header {
+    padding: 8px 4px;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .rbc-date-cell {
+    padding: 4px 8px;
+  }
+
+  .rbc-day-cell {
+    min-height: 80px;
+    padding: 4px;
+  }
+
+  .rbc-event {
+    padding: 2px 4px !important;
+    margin: 2px 0 !important;
+  }
+
+  .rbc-event-content {
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Eventos aprobados */
+.calendar-event-approved {
+  background: linear-gradient(to right, #22c55e, #16a34a) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.calendar-event-approved:hover {
+  background: linear-gradient(to right, #16a34a, #15803d) !important;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.4) !important;
+}
+
+/* Eventos pendientes */
+.calendar-event-pending {
+  background: linear-gradient(to right, #f59e0b, #d97706) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.calendar-event-pending:hover {
+  background: linear-gradient(to right, #d97706, #b45309) !important;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4) !important;
+}
+
+/* Week view optimizado */
+.rbc-time-view {
+  border: 1px solid #e5e7eb;
+}
+
+.rbc-time-slot {
+  height: 40px;
+}
+
+.rbc-current-time-indicator {
+  background-color: #f87171;
+  height: 2px;
+}
+
+.rbc-time-content {
+  overflow-y: auto;
+}
+
+/* Day view */
+.rbc-day-view {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid #e5e7eb;
+}
+
+.rbc-time-header {
+  margin-bottom: 0;
+}
+
+.rbc-time-header-gutter {
+  width: 50px;
+}
+
+/* Drawer móvil */
+.mobile-drawer .ant-drawer-body {
+  padding: 16px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.mobile-drawer .ant-drawer-header {
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* Animaciones suaves */
+.rbc-event {
+  transition: all 0.2s ease-in-out;
+}
+
+.rbc-event:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Selección de eventos */
+.rbc-selected {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+}
+
+.rbc-show-more {
+  background-color: #f3f4f6;
+  color: #1f2937;
+  font-weight: 600;
+  padding: 2px 4px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.rbc-show-more:hover {
+  background-color: #e5e7eb;
+}
+
+/* Mejora del tema general */
+.rbc-toolbar-label {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #1f2937;
+}
+
+.rbc-btn-group button.rbc-active {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.rbc-btn-group button:hover:not(.rbc-active) {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+/* Responsive para tablet */
+@media (max-width: 1024px) and (min-width: 641px) {
+  .rbc-calendar {
+    font-size: 0.8rem;
+  }
+
+  .rbc-header {
+    padding: 6px 2px;
+  }
+
+  .rbc-day-cell {
+    min-height: 70px;
+  }
+
+  .rbc-event-content {
+    font-size: 0.75rem;
+  }
+}
+
+/* Fix para evitar que eventos se sobrepongan mal en week view */
+.rbc-events-container {
+  margin-right: 1px;
+}
+
+.rbc-addons-dts-container {
+  display: none !important;
+}
+
+/* Colores neutrales para mejor legibilidad */
+.rbc-today {
+  background-color: #eff6ff;
+}
+
+.rbc-off-range {
+  background-color: #fafafa;
+}
+
+.rbc-selected {
+  background-color: rgba(59, 130, 246, 0.15);
+}
+
+/* Borders suaves */
+.rbc-calendar,
+.rbc-month-view,
+.rbc-time-view,
+.rbc-day-view {
+  border-color: #e5e7eb;
+}
+
+.rbc-header {
+  border-color: #d1d5db;
+}

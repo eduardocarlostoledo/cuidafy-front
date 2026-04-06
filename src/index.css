@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: "Montserrat", sans-serif;
+}
+
+.full-screen {
+  height: calc(100vh - 100px);
+}
+
+@layer components {
+  .animation-primary {
+    @apply transform hover:text-bgBlack transition duration-500 hover:scale-125;
+  }
+}
+
+.max-width-card {
+  max-width: 270px;
+}
+
+/* span{
+  display: block !important;
+} */
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.schedule-badge {
+  margin: auto 0 0.5rem;
+  display: flex !important;
+}
+
+.list-ol {
+  list-style: initial !important;
+}

@@ -1,0 +1,2 @@
+/api/v1/payment_methods/search
+  Access-Control-Allow-Origin: *

@@ -50,7 +50,7 @@ export const login = createAsyncThunk(
 
 export const register = createAsyncThunk(
   "usuarios",
-  async ({ userForm, navigate, toast }, thunkAPI) => {
+  async ({ userForm, navigate, toast, rute = "/login" }, thunkAPI) => {
     try {
       const response = await api.signUp(userForm);
       toast.success(
@@ -61,7 +61,7 @@ export const register = createAsyncThunk(
         "Por Favor, confirma tu correo electrónico para Ingresar",
         "success"
       );
-      navigate("/");
+      navigate(rute);
       return response.data;
     } catch (err) {
       thunkAPI.rejectWithValue();
@@ -227,9 +227,19 @@ const authSlice = createSlice({
     },
     setLogout: (state, action) => {
       let servicios = localStorage.getItem("services");
+      let careRequest = localStorage.getItem("calyaan_care_request");
+      let careShortlist = localStorage.getItem("calyaan_care_shortlist");
+      let careSelection = localStorage.getItem("calyaan_care_selection");
+      let careContractDraft = localStorage.getItem("calyaan_care_contract_draft");
       localStorage.clear();
       state.user = null;
       localStorage.setItem("services", servicios);
+      if (careRequest) localStorage.setItem("calyaan_care_request", careRequest);
+      if (careShortlist) localStorage.setItem("calyaan_care_shortlist", careShortlist);
+      if (careSelection) localStorage.setItem("calyaan_care_selection", careSelection);
+      if (careContractDraft) {
+        localStorage.setItem("calyaan_care_contract_draft", careContractDraft);
+      }
       //state.trafficLightBase128 = null;
     },
     deleteError: (state, action) => {
@@ -288,28 +298,30 @@ const authSlice = createSlice({
     });
     builder.addCase(register.fulfilled, (state, action) => {
       state.loading = false;
-      localStorage.setItem(
-        "profile",
-        JSON.stringify({
-          confirmado: action?.payload?.confirmado,
+      if (action.payload?.token) {
+        localStorage.setItem(
+          "profile",
+          JSON.stringify({
+            confirmado: action?.payload?.confirmado,
+            email: action.payload?.email,
+            nombre: action.payload?.nombre,
+            profesionalId: action.payload?.profesionalId,
+            token: action.payload?.token,
+            _id: action.payload?._id,
+            trafficLightBase128: ROLES[action.payload?.rol],
+          })
+        );
+
+        state.user = {
+          confirmado: action.payload?.confirmado,
           email: action.payload?.email,
           nombre: action.payload?.nombre,
           profesionalId: action.payload?.profesionalId,
           token: action.payload?.token,
           _id: action.payload?._id,
           trafficLightBase128: ROLES[action.payload?.rol],
-        })
-      );
-
-      state.user = {
-        confirmado: action.payload?.confirmado,
-        email: action.payload?.email,
-        nombre: action.payload?.nombre,
-        profesionalId: action.payload?.profesionalId,
-        token: action.payload?.token,
-        _id: action.payload?._id,
-        trafficLightBase128: ROLES[action.payload?.rol],
-      };
+        };
+      }
     });
 
     // Google Sign In

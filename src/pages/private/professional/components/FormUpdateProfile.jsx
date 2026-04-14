@@ -4,9 +4,9 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import ButtonSpinner from "../../../../components/ButtonSpinner";
+import GeorefLocationSelector from "../../../../components/GeorefLocationSelector";
 import Spinner from "../../../../components/Spinner";
 import clienteAxios from "../../../../config/axios";
-import { localidadesLaborales } from "../../../../data";
 import { especialidadesHabilitadas } from "../../../../data";
 import { deleteError } from "../../../../redux/features/authSlice";
 import { updateProfile } from "../../../../redux/features/professionalSlice";
@@ -21,6 +21,8 @@ const FormUpdateProfile = () => {
 
   const [especialidadesForm, setEspecialidadForm] = useState([]);
   const [localidadForm, setLocalidadForm] = useState([]);
+  const [localidadDraft, setLocalidadDraft] = useState("");
+  const [locationSelectorKey, setLocationSelectorKey] = useState(0);
 
   const [especialidades, setEspecialidades] = useState([]);
 
@@ -128,19 +130,25 @@ const FormUpdateProfile = () => {
     );
   };
 
-  const handleChangeLocalidad = (e) => {
-
-    if (!localidadForm.includes(e.target.value) && e.target.value !== "") {
-      setLocalidadForm([...localidadForm, e.target.value]);
-    }
-
-    setValueForm({ ...valueForm, areasLaborales: e.target.value });
-  };
-
   const eliminarLocalidad = (localidad) => {
     setLocalidadForm(
       localidadForm.filter((localidadState) => localidadState !== localidad)
     );
+  };
+
+  const agregarLocalidadGeoref = () => {
+    if (!localidadDraft) {
+      return toast.error("Selecciona una ubicacion para agregar");
+    }
+
+    if (localidadForm.includes(localidadDraft)) {
+      return toast.error("La localidad ya fue agregada");
+    }
+
+    setLocalidadForm([...localidadForm, localidadDraft]);
+    setValueForm({ ...valueForm, areasLaborales: localidadDraft });
+    setLocalidadDraft("");
+    setLocationSelectorKey((prev) => prev + 1);
   };
 
   const handleSubmit = async (e) => {
@@ -276,21 +284,19 @@ const FormUpdateProfile = () => {
         )}
 
         <label htmlFor="areasLaborales">Zonas Laborales</label>
-        <div className="mt-2 mb-4">
-          <select
-            id="areasLaborales"
-            className="border border-gray-300 text-gray-900 text-sm rounded-lg bg-gray-200 focus:border-bgHover focus:bg-white focus:outline-none block w-full p-3"
-            value={areasLaborales}
-            onChange={handleChangeLocalidad}
-            name="areasLaborales"
+        <div className="mt-2 mb-4 space-y-3">
+          <GeorefLocationSelector
+            key={locationSelectorKey}
+            value=""
+            onChange={({ label }) => setLocalidadDraft(label)}
+          />
+          <button
+            type="button"
+            onClick={agregarLocalidadGeoref}
+            className="rounded bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
           >
-            <option value="">Localidades</option>
-            {localidadesLaborales?.map((localidad, index) => (
-              <option key={index} value={localidad}>
-                {localidad}
-              </option>
-            ))}
-          </select>
+            Agregar localidad
+          </button>
         </div>
 
         {localidadForm?.length > 0 && (

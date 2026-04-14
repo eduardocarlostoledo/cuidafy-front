@@ -17,7 +17,7 @@ const Footer = () => {
                 width="289"
                 height="153"
                 alt="Logo Cuidafy"
-                src="https://calyaan.b-cdn.net/wp-content/uploads/2021/11/RecursoRecurso-3-.png"
+                src="/logo.jpg"
               />
             </div>
 

@@ -5,7 +5,6 @@ import { BiEditAlt } from "react-icons/bi";
 import moment from "moment";
 import "./Ordenesantd.css";
 import { disponibilidadesTotalesGet } from "../../../../redux/features/professionalSlice";
-import { localidadesLaborales } from "../../../../data";
 import { especialidadesHabilitadas } from "../../../../data";
 
 const { Option } = Select;
@@ -29,6 +28,13 @@ const HorarioProfessionalAntDesing = () => {
   const orders = useSelector(
     (state) => (state.professional.disponibilidad || [])
   );
+  const localityOptions = Array.from(
+    new Set(
+      (Array.isArray(orders) ? orders : []).flatMap(
+        (order) => order?.creador?.localidadesLaborales || []
+      )
+    )
+  ).sort((a, b) => a.localeCompare(b, "es"));
   
   useEffect(() => {
     filterOrdenes();
@@ -245,7 +251,7 @@ const HorarioProfessionalAntDesing = () => {
                 onChange={(value) => setSelectedLocalidad(value)}
               >
                 <Option value={null}>Todos</Option>
-                {localidadesLaborales?.map((localidad, index) => (
+                {localityOptions.map((localidad, index) => (
                   <Option key={index} value={localidad}>
                     {localidad}
                   </Option>

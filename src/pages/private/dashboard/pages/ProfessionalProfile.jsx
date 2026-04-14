@@ -7,8 +7,8 @@ import clienteAxios from "../../../../config/axios";
 import {
   especialidadesHabilitadas,
   localidades,
-  localidadesLaborales,
 } from "../../../../data";
+import GeorefLocationSelector from "../../../../components/GeorefLocationSelector";
 import {
   AiOutlineEdit,
   AiOutlineClose,
@@ -66,6 +66,8 @@ const ProfessionalProfile = () => {
 
   const [especialidadesForm, setEspecialidadForm] = useState([]);
   const [localidadForm, setLocalidadForm] = useState([]);
+  const [localidadDraft, setLocalidadDraft] = useState("");
+  const [locationSelectorKey, setLocationSelectorKey] = useState(0);
   const [descriptionForm, setDescriptionForm] = useState("");
 
   const getUser = async () => {
@@ -201,18 +203,24 @@ const ProfessionalProfile = () => {
     );
   };
 
-  const handleChangeLocalidad = (e) => {
-    // console.log("e.target.value", e.target.value);
-    // console.log("localidadForm", localidadForm);
-    if (!localidadForm.includes(e.target.value) && e.target.value !== "") {
-      setLocalidadForm([...localidadForm, e.target.value]);
-    }
-  };
-
   const eliminarLocalidad = (localidad) => {
     setLocalidadForm(
       localidadForm.filter((localidadState) => localidadState !== localidad)
     );
+  };
+
+  const agregarLocalidadGeoref = () => {
+    if (!localidadDraft) {
+      return toast.error("Selecciona una ubicacion para agregar");
+    }
+
+    if (localidadForm.includes(localidadDraft)) {
+      return toast.error("La localidad ya fue agregada");
+    }
+
+    setLocalidadForm([...localidadForm, localidadDraft]);
+    setLocalidadDraft("");
+    setLocationSelectorKey((prev) => prev + 1);
   };
 
   const confirmProfesional = async () => {
@@ -705,23 +713,22 @@ const ProfessionalProfile = () => {
               <p className="text-base my-4 text-gray-900">
                 Localidades Laborales
               </p>
-              <div className="mt-2 mb-4">
-                <select
-                  id="areasLaborales"
-                  className="border border-gray-300 text-gray-900 text-sm rounded-lg bg-gray-200 focus:border-bgHover focus:bg-white focus:outline-none block w-full p-3"
-                  // value={areasLaborales}
-                  onChange={handleChangeLocalidad}
-                  disabled={!forEdit}
-                  name="areasLaborales"
-                >
-                  <option value="">Localidades</option>
-                  {localidadesLaborales?.map((localidad, index) => (
-                    <option key={index} value={localidad}>
-                      {localidad}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {forEdit && (
+                <div className="mt-2 mb-4 space-y-3">
+                  <GeorefLocationSelector
+                    key={locationSelectorKey}
+                    value=""
+                    onChange={({ label }) => setLocalidadDraft(label)}
+                  />
+                  <button
+                    type="button"
+                    onClick={agregarLocalidadGeoref}
+                    className="rounded bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+                  >
+                    Agregar localidad
+                  </button>
+                </div>
+              )}
               <div className=" flex flex-wrap gap-4">
                 {localidadForm?.length > 0 && (
                   <div className="my-4 flex flex-wrap gap-4">

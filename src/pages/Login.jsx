@@ -1,6 +1,6 @@
 import React, { lazy, useEffect, useState } from "react";
 
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -24,6 +24,8 @@ import clienteAxios from "../config/axios";
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const nextPath = new URLSearchParams(location.search).get("next") || "/";
 
   const { loading, error } = useSelector((state) => ({ ...state.auth }));
 
@@ -38,7 +40,7 @@ const Login = () => {
   function handleGoogleLoginSuccess(tokenResponse) {
     const accessToken = tokenResponse.access_token;
 
-    dispatch(googleSignIn({ accessToken, navigate, toast }));
+    dispatch(googleSignIn({ accessToken, navigate, toast, rute: nextPath }));
   }
 
   const logincongoogle = useGoogleLogin({
@@ -65,7 +67,9 @@ const Login = () => {
 
     try {
       console.log("Enviando login con:", userForm);
-      const result = await dispatch(login({ userForm, toast, navigate, rute: "/" })).unwrap();
+      const result = await dispatch(
+        login({ userForm, toast, navigate, rute: nextPath })
+      ).unwrap();
 
       console.log("Login exitoso, resultado:", result);
 
@@ -83,7 +87,7 @@ const Login = () => {
         }
       } else if (result.confirmado) {
         // Si está confirmado, el thunk ya navegó, pero nos aseguramos
-        navigate("/", { replace: true });
+        navigate(nextPath, { replace: true });
       }
 
       setUserForm({ email: "", password: "", rol: "CLIENTE" });
@@ -217,7 +221,7 @@ const Login = () => {
           <p className="mt-8 text-center">
             ¿No tienes cuenta?{" "}
             <Link
-              to="/registro"
+              to={`/registro?next=${encodeURIComponent(nextPath)}`}
               className="text-primary hover:text-bgHover font-semibold text-center"
             >
               Créate una cuenta gratis

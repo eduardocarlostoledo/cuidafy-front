@@ -11,6 +11,17 @@ import {
   toggleShortlistItem,
 } from "../../helpers/careFlow";
 
+const formatSlotDayLabel = (dateString) => {
+  if (!dateString) return "Dia sin fecha";
+
+  const date = new Date(`${dateString}T12:00:00`);
+  return new Intl.DateTimeFormat("es-AR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(date);
+};
+
 const CaregiverProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -43,6 +54,29 @@ const CaregiverProfile = () => {
 
   const selectedSlot =
     caregiver?.slots.find((slot) => slot.horarioId === selectedSlotId) || caregiver?.nextSlot;
+
+  const slotsGroupedByDay = useMemo(() => {
+    if (!caregiver?.slots?.length) {
+      return [];
+    }
+
+    const groupedSlots = caregiver.slots.reduce((accumulator, slot) => {
+      if (!accumulator[slot.fecha]) {
+        accumulator[slot.fecha] = [];
+      }
+
+      accumulator[slot.fecha].push(slot);
+      return accumulator;
+    }, {});
+
+    return Object.entries(groupedSlots)
+      .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+      .map(([date, slots]) => ({
+        date,
+        label: formatSlotDayLabel(date),
+        slots: [...slots].sort((slotA, slotB) => slotA.hora.localeCompare(slotB.hora)),
+      }));
+  }, [caregiver?.slots]);
 
   const handleContinue = () => {
     if (!caregiver || !selectedSlot) return;
@@ -215,35 +249,58 @@ const CaregiverProfile = () => {
                 </h3>
               </div>
               <div className="rounded-full bg-[#f7efe2] px-4 py-2 text-sm font-semibold text-slate-700">
-                {caregiver.slots.length} horario(s) visibles
+                {caregiver.slots.length} horario(s) en {slotsGroupedByDay.length} dia(s)
               </div>
             </div>
 
-            <div className="mt-6 grid gap-3">
-              {caregiver.slots.map((slot) => {
-                const selected = selectedSlotId === slot.horarioId;
-
-                return (
-                  <button
-                    key={`${slot.disponibilidadId}-${slot.horarioId}`}
-                    type="button"
-                    onClick={() => setSelectedSlotId(slot.horarioId)}
-                    className={`flex items-center justify-between rounded-[1.25rem] border px-5 py-4 text-left transition ${
-                      selected
-                        ? "border-[#a6782b] bg-[#fff4df]"
-                        : "border-slate-200 bg-[#fcfaf7] hover:border-[#d8c3a0]"
-                    }`}
-                  >
+            <div className="mt-6 space-y-5">
+              {slotsGroupedByDay.map((dayGroup) => (
+                <div
+                  key={dayGroup.date}
+                  className="rounded-[1.5rem] border border-slate-200 bg-[#fcfaf7] p-4 md:p-5"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <p className="font-semibold text-slate-900">{slot.fecha}</p>
-                      <p className="mt-1 text-sm text-slate-600">{slot.hora}</p>
+                      <p className="text-base font-semibold capitalize text-slate-900">
+                        {dayGroup.label}
+                      </p>
+                      <p className="mt-1 text-sm text-slate-500">{dayGroup.date}</p>
                     </div>
-                    <span className="text-sm font-semibold text-[#7c5a23]">
-                      {selected ? "Seleccionado" : "Elegir"}
+                    <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#7c5a23]">
+                      {dayGroup.slots.length} horario(s)
                     </span>
-                  </button>
-                );
-              })}
+                  </div>
+
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                    {dayGroup.slots.map((slot) => {
+                      const selected = selectedSlotId === slot.horarioId;
+
+                      return (
+                        <button
+                          key={`${slot.disponibilidadId}-${slot.horarioId}`}
+                          type="button"
+                          onClick={() => setSelectedSlotId(slot.horarioId)}
+                          className={`flex items-center justify-between rounded-[1.25rem] border px-4 py-4 text-left transition ${
+                            selected
+                              ? "border-[#a6782b] bg-[#fff4df]"
+                              : "border-slate-200 bg-white hover:border-[#d8c3a0]"
+                          }`}
+                        >
+                          <div>
+                            <p className="font-semibold text-slate-900">{slot.hora}</p>
+                            <p className="mt-1 text-xs uppercase tracking-[0.14em] text-slate-500">
+                              {selected ? "Horario elegido" : "Disponible"}
+                            </p>
+                          </div>
+                          <span className="text-sm font-semibold text-[#7c5a23]">
+                            {selected ? "Seleccionado" : "Elegir"}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">

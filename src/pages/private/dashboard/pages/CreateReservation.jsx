@@ -10,6 +10,7 @@ import ScheduleProfessional from "../components/FormReserva/ScheduleProfessional
 import FormUserEmail from "../components/FormReserva/FormUserEmail";
 import FormUser from "../components/FormReserva/FormUser";
 import ServiciosComponent from "../components/FormReserva/ServiciosComponent";
+import { parseGeorefLocation } from "../../../../helpers/georefLocation";
 import axios from "axios";
 import e from "cors";
 import { Link } from "react-router-dom";
@@ -182,6 +183,9 @@ const CreateReservation = () => {
   async function generarPreferencias(metodo) {
 
     setCargando2(true);
+    const structuredServiceLocation = parseGeorefLocation(
+      reserva.localidad_servicio
+    );
 
     const clienteNuevo = {
       email: reserva.cliente_email,
@@ -192,7 +196,7 @@ const CreateReservation = () => {
       direccion: reserva.direccion_servicio,
       localidad:reserva.localidad_servicio,
       info: reserva.adicional_direccion_servicio,
-      ciudad: "Posadas",
+      ciudad: structuredServiceLocation.provincia || "Argentina",
     };
 
     try {
@@ -306,7 +310,7 @@ const CreateReservation = () => {
               { id: "bank_transfer" },
             ],
           },
-          statement_descriptor: "CALYAAN COLOMBIA",
+          statement_descriptor: "CUIDAFY",
           external_reference: datos1.factura,
         },
         {

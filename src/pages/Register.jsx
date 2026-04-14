@@ -1,6 +1,6 @@
 import React, { lazy, useEffect, useState } from 'react'
 
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteError, register, setLogout } from '../redux/features/authSlice';
@@ -8,7 +8,6 @@ import { deleteError, register, setLogout } from '../redux/features/authSlice';
 import { toast } from 'react-toastify';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
-//const ButtonSpinner = lazy(() => import('../components/ButtonSpinner'))
 import ButtonSpinner from '../components/ButtonSpinner'
 
 import bg2 from "../assets/bg-2-auth.jpg"
@@ -19,6 +18,9 @@ const Register = ({referido=false}) => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
+    const nextPath = new URLSearchParams(location.search).get("next") || "/";
+    const loginRedirect = `/login?next=${encodeURIComponent(nextPath)}`;
 
     const { loading, error } = useSelector((state) => ({ ...state.auth }));
 
@@ -68,16 +70,14 @@ const Register = ({referido=false}) => {
             try {
                 const response = await clienteAxios.post(`api/usuarios?referido=${referido}`, userForm);
                 toast.success("Registro exitoso");
-                
 
-            
-                navigate("/");
+                navigate(loginRedirect);
                 return response.data;
-          
+
               } catch (err) {
                 if (err.code === "ERR_NETWORK") {
                   dispatch(
-                    addMessagee({
+                    addMessage({
                       type: "error",
                       text: "Por favor, inténtelo de nuevo más tarde.",
                     })
@@ -90,13 +90,13 @@ const Register = ({referido=false}) => {
                     })
                   );
                 }
-          
+
                 return;
               }
 
 
         }else{
-            dispatch(register({ userForm, navigate, toast }));
+            dispatch(register({ userForm, navigate, toast, rute: loginRedirect }));
         }
 
         setUserForm({
@@ -124,7 +124,6 @@ const Register = ({referido=false}) => {
                     <div className='flex flex-col justify-center items-center'>
                         <LazyLoadImage effect='blur' width="150" height="80" 
                         alt="Logo fondo trasparente" 
-                        //src="https://www.calyaan.com.co/static/media/logo.7391fed19edfcfb85f3d.png" 
                         />
                         
                         <h1 className="text-xl md:text-2xl font-bold leading-tight mt-4">Regístrate</h1>
@@ -165,12 +164,12 @@ const Register = ({referido=false}) => {
                             <ButtonSpinner />
                         ) :
                             <button type="submit" className="w-full block bg-primary hover:bg-bgHover focus:bg-bgHover text-white font-semibold rounded-lg
-                            px-4 py-3 mt-6">Regístrame</button>
+                            px-4 py-3 mt-6">Registrarme</button>
                         }
 
                     </form>
 
-                    <p className="mt-3 gap-4">¿Ya tienes una cuenta? <Link to="/" className="text-primary hover:text-bgHover font-semibold">
+                    <p className="mt-3 gap-4">¿Ya tienes una cuenta? <Link to={loginRedirect} className="text-primary hover:text-bgHover font-semibold">
                         Inicia sesión aquí</Link></p>
 
                 </div>

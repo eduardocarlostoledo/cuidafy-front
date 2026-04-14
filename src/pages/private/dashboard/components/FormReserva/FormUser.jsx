@@ -1,8 +1,10 @@
-import React from 'react'
-import { localidadesLaborales } from '../../../../../data'
+import React from "react";
+import GeorefLocationSelector from "../../../../../components/GeorefLocationSelector";
+import { parseGeorefLocation } from "../../../../../helpers/georefLocation";
 
 const FormUser = ({ handleChange, reserva }) => {
     console.log(reserva, "FORM USER")
+    const structuredLocation = parseGeorefLocation(reserva.localidad_servicio);
     const isValidEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -195,14 +197,14 @@ const FormUser = ({ handleChange, reserva }) => {
                             className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
                             htmlFor="grid-password"
                         >
-                            Ciudad
+                            Provincia
                         </label>
                         <input
                             type="text"
                             className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                            placeholder="Ciudad"
+                            placeholder="Provincia"
                             disabled={true}
-                            value="Posadas"
+                            value={structuredLocation.provincia || "Argentina"}
                         />
                     </div>
                 </div>
@@ -214,21 +216,24 @@ const FormUser = ({ handleChange, reserva }) => {
                         >
                             Localidad
                         </label>
-
-                        <select
-                            type="text"
-                            className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        <GeorefLocationSelector
                             value={reserva.localidad_servicio}
-                            onChange={handleChange}
-                            name="localidad_servicio"
-                        >
-                            <option value=""> {reserva?.localidad_servicio} </option>
-                            {localidadesLaborales?.map((localidad, index) => (
-                                <option key={index} value={localidad}>
-                                    {localidad}
-                                </option>
-                            ))}
-                        </select>
+                            onChange={({ label }) =>
+                                handleChange({
+                                    target: {
+                                        name: "localidad_servicio",
+                                        value: label,
+                                    },
+                                })
+                            }
+                            selectClassName="border-0 px-3 py-3 shadow"
+                            className="grid-cols-1"
+                            labels={{
+                                provincia: "Provincia",
+                                municipio: "Municipio",
+                                localidad: "Localidad",
+                            }}
+                        />
                     </div>
                     <div className="mt-2 mb-4"></div>
                 </div>

@@ -4,10 +4,10 @@ import { BsCalendarDate } from "react-icons/bs";
 import { FaHandSparkles } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 
+import GeorefLocationSelector from "../../components/GeorefLocationSelector";
 import ScheduleByDateForm from "../../components/ScheduleByDateForm";
 import ScheduleByProfessionalForm from "../../components/ScheduleByProfessionalForm";
 // import { localidades } from "../../data";
-import { localidadesLaborales } from "../../data";
 
 const Reservation = () => {
   window.scrollTo(0, 0);
@@ -38,26 +38,11 @@ const Reservation = () => {
               quieres el servicio
             </p>
             <div className="flex justify-center">
-              <div className="relative">
-                <select
-                  className="appearance-none  bg-white border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white max-md:w-full focus:border-gray-500"
-                  name="localidad"
-                  id="localidad"
-                  onChange={(e) => setLocalidad(e.target.value)}
+              <div className="w-full max-w-4xl">
+                <GeorefLocationSelector
                   value={localidad}
-                >
-                  <option value="">Localidad</option>
-                  {localidadesLaborales.map((localidad, index) => (
-                    // <option key={index} value={localidad.split(" ")[1]}>
-                    <option key={index} value={localidad}>
-                      {localidad}
-                    </option>
-                  ))}
-                </select>
-
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <AiOutlineArrowDown className="fill-current h-4 w-4" />
-                </div>
+                  onChange={({ label }) => setLocalidad(label)}
+                />
               </div>
             </div>
 

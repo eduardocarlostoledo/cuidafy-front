@@ -6,6 +6,10 @@ const ProfileLayout = lazy(() => import("./layout/ProfileLayout"));
 const DashboardLayout = lazy(() => import("./layout/DashboardLayout"));
 const Login = lazy(() => import("./pages/Login"));
 const Home = lazy(() => import("./pages/Home"));
+const RheumazinForte = lazy(() => import("./pages/RheumazinForte"));
+const RheumazinTerminos = lazy(() => import("./pages/RheumazinTerminos"));
+const RheumazinPrivacidad = lazy(() => import("./pages/RheumazinPrivacidad"));
+const RheumazinDevoluciones = lazy(() => import("./pages/RheumazinDevoluciones"));
 const CareIntake = lazy(() => import("./pages/care/CareIntake"));
 const CareMatches = lazy(() => import("./pages/care/CareMatches"));
 const CaregiverProfile = lazy(() => import("./pages/care/CaregiverProfile"));
@@ -151,6 +155,10 @@ function App() {
 
       <RoutesWithNotFound>
         <Route path="/ver" element={<Ver />} />
+        <Route path="/rheumazin-forte" element={<RheumazinForte />} />
+        <Route path="/terminos-rheumazin" element={<RheumazinTerminos />} />
+        <Route path="/privacidad-rheumazin" element={<RheumazinPrivacidad />} />
+        <Route path="/devoluciones-rheumazin" element={<RheumazinDevoluciones />} />
         {/* Public Routes */}
         <Route element={<ServicesLayout />}>
           <Route path="/servicios" element={<Services />} />

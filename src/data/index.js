@@ -7,32 +7,53 @@
 //     link: "https://calyaan.com/producto/limpieza-facial-profunda-masaje-descontracturante/",
 //   },
 
-// Provincias de Argentina con sus ciudades principales
+// Provincias argentinas con localidades de referencia para compatibilidad legacy.
 export const provincias = {
-  "Buenos Aires": ["La Plata", "Mar del Plata", "Tandil", "Bahía Blanca", "Junín", "Bragado"],
-  "Catamarca": ["San Fernando del Valle de Catamarca", "Belén", "Andalgalá"],
-  "Chaco": ["Resistencia", "Corrientes", "Machagai"],
-  "Chubut": ["Rawson", "Comodriva", "Puerto Madryn", "Esquel"],
-  "Ciudad Autónoma de Buenos Aires": ["San Nicolás", "San Telmo", "La Boca", "Palermo", "Recoleta"],
-  "Córdoba": ["Córdoba", "Rosario", "Río Cuarto", "San Francisco"],
-  "Corrientes": ["Corrientes", "Goya", "Oberá"],
-  "Entre Ríos": ["Paraná", "Concordia", "Gualeguaychú"],
-  "Formosa": ["Formosa", "Clorinda"],
-  "Jujuy": ["San Salvador de Jujuy", "Palpalá", "Purmamarca"],
-  "La Pampa": ["Santa Rosa", "General Pico"],
-  "La Rioja": ["La Rioja", "Chilecito"],
-  "Mendoza": ["Mendoza", "San Rafael", "Godoy Cruz"],
-  "Misiones": ["Posadas", "Oberá", "Puerto Iguazú", "Eldorado", "Montecarlo"],
-  "Neuquén": ["Neuquén", "San Martín de los Andes"],
-  "Río Negro": ["Viedma", "General Roca", "San Antonio Oeste"],
-  "Salta": ["Salta", "San Salvador de Jujuy"],
-  "San Juan": ["San Juan", "Deán Funes"],
-  "San Luis": ["San Luis", "Merlo"],
-  "Santa Cruz": ["Río Gallegos", "Puerto Santa Cruz"],
-  "Santa Fe": ["Rosario", "Santa Fe", "Venado Tuerto"],
-  "Santiago del Estero": ["Santiago del Estero", "La Banda"],
-  "Tierra del Fuego": ["Ushuaia", "Río Grande"],
-  "Tucumán": ["San Miguel de Tucumán", "Tafí Viejo"],
+  "Buenos Aires": [
+    "La Plata",
+    "Mar del Plata",
+    "Bahia Blanca",
+    "Tandil",
+    "San Nicolas de los Arroyos",
+    "Junin",
+    "Quilmes",
+    "Lomas de Zamora",
+  ],
+  "Catamarca": [
+    "San Fernando del Valle de Catamarca",
+    "Belen",
+    "Andalgala",
+    "Tinogasta",
+  ],
+  Chaco: ["Resistencia", "Presidencia Roque Saenz Pena", "Villa Angela", "Charata"],
+  Chubut: ["Rawson", "Comodoro Rivadavia", "Puerto Madryn", "Trelew", "Esquel"],
+  "Ciudad Autonoma de Buenos Aires": [
+    "Palermo",
+    "Recoleta",
+    "Belgrano",
+    "Caballito",
+    "Flores",
+    "Villa Urquiza",
+  ],
+  Cordoba: ["Cordoba", "Rio Cuarto", "Villa Maria", "San Francisco", "Carlos Paz"],
+  Corrientes: ["Corrientes", "Goya", "Paso de los Libres", "Mercedes"],
+  "Entre Rios": ["Parana", "Concordia", "Gualeguaychu", "Concepcion del Uruguay"],
+  Formosa: ["Formosa", "Clorinda", "Pirane"],
+  Jujuy: ["San Salvador de Jujuy", "Palpala", "Libertador General San Martin", "Perico"],
+  "La Pampa": ["Santa Rosa", "General Pico", "Toay"],
+  "La Rioja": ["La Rioja", "Chilecito", "Aimogasta"],
+  Mendoza: ["Mendoza", "Godoy Cruz", "Maipu", "San Rafael", "Lujan de Cuyo"],
+  Misiones: ["Posadas", "Obera", "Puerto Iguazu", "Eldorado", "Leandro N. Alem"],
+  Neuquen: ["Neuquen", "San Martin de los Andes", "Zapala", "Cutral Co"],
+  "Rio Negro": ["Viedma", "General Roca", "San Carlos de Bariloche", "Cipolletti"],
+  Salta: ["Salta", "Oran", "Tartagal", "General Guemes"],
+  "San Juan": ["San Juan", "Rawson", "Rivadavia"],
+  "San Luis": ["San Luis", "Villa Mercedes", "Merlo"],
+  "Santa Cruz": ["Rio Gallegos", "Caleta Olivia", "El Calafate"],
+  "Santa Fe": ["Rosario", "Santa Fe", "Rafaela", "Venado Tuerto"],
+  "Santiago del Estero": ["Santiago del Estero", "La Banda", "Termas de Rio Hondo"],
+  "Tierra del Fuego": ["Ushuaia", "Rio Grande", "Tolhuin"],
+  Tucuman: ["San Miguel de Tucuman", "Tafi Viejo", "Yerba Buena", "Concepcion"],
 };
 
 // Para compatibilidad con código existente
@@ -234,29 +255,11 @@ export const servicesLandingPage = [
 ];
 
 
-//este array se usa en perfil-profesional para mapear los lugares donde ofrece servicio el profesional deberia ser dinamico y traer las localidades que existen en disponibilidad en el endpoint api/profesional/disponibilidades-totales
-export const localidadesLaborales = [
-  "1. Posadas",
-  "2. Chapinero",
-  "3. Santa Fe",
-  "4. San Cristóbal",
-  "5. Usme",
-  "6. Tunjuelito",
-  "7. Bosa",
-  "8. Kennedy",
-  "9. Fontibón",
-  "10. Engativá",
-  "11. Suba",
-  "12. Barrios Unidos",
-  "13. Teusaquillo",
-  "14. Los Mártires",
-  "15. Antonio Nariño",
-  "16. Puente Aranda",
-  "17. Candelaria",
-  "18. Rafael Uribe Uribe",
-  "19. Ciudad Bolívar",
-  "20. Sumapaz",
-];
+// Compatibilidad legacy: lista plana usando formato "Provincia > Localidad".
+export const localidadesLaborales = Object.entries(provincias).flatMap(
+  ([provincia, localidadesProvincia]) =>
+    localidadesProvincia.map((localidad) => `${provincia} > ${localidad}`)
+);
 
 
 export const localidadesLaboralesEmbudoVentas = [

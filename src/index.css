@@ -24,10 +24,6 @@
   display: block !important;
 } */
 
-.dropdown:hover .dropdown-menu {
-  display: block;
-}
-
 .schedule-badge {
   margin: auto 0 0.5rem;
   display: flex !important;

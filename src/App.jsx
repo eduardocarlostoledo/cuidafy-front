@@ -11,7 +11,7 @@ const RheumazinTerminos = lazy(() => import("./pages/RheumazinTerminos"));
 const RheumazinPrivacidad = lazy(() => import("./pages/RheumazinPrivacidad"));
 const RheumazinDevoluciones = lazy(() => import("./pages/RheumazinDevoluciones"));
 const CareIntake = lazy(() => import("./pages/care/CareIntake"));
-const CareMatches = lazy(() => import("./pages/care/CareMatches"));
+const CareIntakeDetailed = lazy(() => import("./pages/care/CareIntakeDetailed"));
 const CaregiverProfile = lazy(() => import("./pages/care/CaregiverProfile"));
 const CareCheckout = lazy(() => import("./pages/care/CareCheckout"));
 const CareCaseInbox = lazy(() => import("./pages/care/CareCaseInbox"));
@@ -174,7 +174,8 @@ function App() {
 
         <Route path="/" element={<Home />} />
         <Route path="/encontrar-cuidado" element={<CareIntake />} />
-        <Route path="/cuidado/matches" element={<CareMatches />} />
+        <Route path="/cuidado/ajustar-solicitud" element={<CareIntakeDetailed />} />
+        <Route path="/cuidado/matches" element={<CareIntake />} />
         <Route path="/cuidado/cuidador/:id" element={<CaregiverProfile />} />
         <Route path="/cuidado/confirmar" element={<CareCheckout />} />
         <Route path="/login" element={<Login />} />

@@ -184,7 +184,7 @@ const CareCheckout = () => {
       [field]: value,
     }));
   };
-
+ 
   const createOrderViaCareContract = async () => {
     const { data } = await clienteAxios.post(
       "/api/pay/care-contract",

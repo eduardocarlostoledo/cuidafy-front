@@ -9,6 +9,7 @@ import swal from "sweetalert";
 
 const AdminProfile = () => {
   const { id } = useParams();
+  const [changingRole, setChangingRole] = useState(false);
 
   const [valueForm, setValueForm] = useState({
     nombre: "",
@@ -23,6 +24,7 @@ const AdminProfile = () => {
     reservas: [],
     estado: "",
     ultimaConexion: "",
+    rol: "",
   });
 
   const {
@@ -39,7 +41,33 @@ const AdminProfile = () => {
     estado,
     confirmado,
     ultimaConexion,
+    rol,
   } = valueForm;
+
+  const handleChangeRole = async (nuevoRol) => {
+    if (!nuevoRol || nuevoRol === rol) return;
+
+    const confirmacion = window.confirm(
+      `¿Cambiar rol de ${rol} a ${nuevoRol}?`
+    );
+    if (!confirmacion) return;
+
+    setChangingRole(true);
+    try {
+      const { data } = await clienteAxios.put("api/usuarios/cambiar-rol", {
+        userId: id,
+        nuevoRol,
+      });
+      toast.success(data.msg);
+      setValueForm((prev) => ({ ...prev, rol: nuevoRol }));
+    } catch (error) {
+      const errorMsg =
+        error.response?.data?.msg || "Error al cambiar el rol";
+      toast.error(errorMsg);
+    } finally {
+      setChangingRole(false);
+    }
+  };
 
   const deleteUsuario = async (id) => {
     try {     
@@ -111,7 +139,16 @@ const AdminProfile = () => {
                 <div className="ml-5 rounded-full bg-green-200 text-green-500 text-sm px-6 py-2 flex justify-center items-center">
                   {estado ? "Cuenta Verificada" : "Cuenta Sin Verificar"}
                 </div>
-                
+                <select
+                  value={rol}
+                  onChange={(e) => handleChangeRole(e.target.value)}
+                  disabled={changingRole || rol === "SUPERADMIN"}
+                  className="focus:outline-none ml-5 border border-indigo-700 rounded px-3 md:px-6 py-2 text-sm bg-white text-gray-800"
+                >
+                  <option value="CLIENTE">Cliente</option>
+                  <option value="PROFESIONAL">Profesional</option>
+                  <option value="ADMIN">Administrador</option>
+                </select>
               </div>
 
           </div>

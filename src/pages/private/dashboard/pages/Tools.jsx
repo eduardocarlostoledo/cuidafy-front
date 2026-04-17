@@ -35,7 +35,7 @@ const initialAutomation = {
   wsid: "wsfe",
   numero: "1",
   sistema: "RECE",
-  nombreFantasia: "Calyaan",
+  nombreFantasia: "Cuidafy",
 };
 
 const initialTestInvoice = {

@@ -23,6 +23,19 @@ const SLOT_OPTIONS = [
   "21:00-22:00",
 ];
 
+const SLOT_DURATION_OPTIONS = [
+  { value: 30, label: "30 minutos" },
+  { value: 60, label: "1 hora" },
+  { value: 120, label: "2 horas" },
+  { value: 180, label: "3 horas" },
+  { value: 240, label: "4 horas" },
+  { value: 300, label: "5 horas" },
+  { value: 360, label: "6 horas" },
+  { value: 480, label: "8 horas" },
+  { value: 600, label: "10 horas" },
+  { value: 720, label: "12 horas" },
+];
+
 const DAYS = [
   { dayOfWeek: 0, label: "Domingo" },
   { dayOfWeek: 1, label: "Lunes" },
@@ -41,10 +54,12 @@ const EXCEPTION_TYPES = [
   { value: "special_hours", label: "Horario especial del dia" },
 ];
 
+const createDefaultRange = () => ({ start: "09:00", end: "18:00" });
+
 const createEmptyDay = (dayOfWeek) => ({
   dayOfWeek,
   enabled: false,
-  ranges: [{ start: "09:00", end: "18:00" }],
+  ranges: [createDefaultRange()],
 });
 
 const createDefaultTemplate = () => ({
@@ -60,11 +75,14 @@ const createEmptyException = () => ({
   startDate: "",
   endDate: "",
   reason: "",
-  ranges: [{ start: "09:00", end: "18:00" }],
+  ranges: [createDefaultRange()],
 });
 
 const shouldUseRanges = (type) =>
   ["manual_block", "manual_open", "special_hours"].includes(type);
+
+const isSlotAvailable = (slot) =>
+  slot?.stock === true || typeof slot?.stock === "undefined";
 
 const normalizeTemplate = (template) => {
   const base = createDefaultTemplate();
@@ -97,7 +115,7 @@ const normalizeTemplate = (template) => {
                 start: range.start || range.startTime || "09:00",
                 end: range.end || range.endTime || "18:00",
               }))
-            : [{ start: "09:00", end: "18:00" }],
+            : [createDefaultRange()],
       };
     }),
   };
@@ -139,18 +157,19 @@ const AvailabilityPreviewTable = ({ professionalId }) => {
       title: "Horarios disponibles",
       dataIndex: "horarios",
       key: "horarios",
-      render: (horarios = []) =>
-        horarios.length > 0 ? (
+      render: (horarios = []) => {
+        const availableHorarios = horarios.filter(isSlotAvailable);
+
+        return availableHorarios.length > 0 ? (
           <ul className="list-disc pl-4">
-            {horarios
-              .filter((horario) => horario.stock !== false)
-              .map((horario) => (
-                <li key={horario._id || horario.hora}>{horario.hora}</li>
-              ))}
+            {availableHorarios.map((horario) => (
+              <li key={horario._id || horario.hora}>{horario.hora}</li>
+            ))}
           </ul>
         ) : (
           <span>Sin horarios</span>
-        ),
+        );
+      },
     },
   ];
 
@@ -280,9 +299,7 @@ const Schedule = ({ profesionalSelect }) => {
         setLegacyDateInput(dateValue);
         setLegacySlots(horarios);
         setLegacySelectedOptions(
-          horarios
-            .filter((slot) => slot.stock !== false)
-            .map((slot) => slot.hora)
+          horarios.filter(isSlotAvailable).map((slot) => slot.hora)
         );
       } catch (error) {
         toast.error(
@@ -331,7 +348,7 @@ const Schedule = ({ profesionalSelect }) => {
         day.dayOfWeek === dayOfWeek
           ? {
               ...day,
-              ranges: [...day.ranges, { start: "09:00", end: "18:00" }],
+              ranges: [...day.ranges, createDefaultRange()],
             }
           : day
       ),
@@ -349,12 +366,20 @@ const Schedule = ({ profesionalSelect }) => {
         const nextRanges = day.ranges.filter((_, index) => index !== rangeIndex);
         return {
           ...day,
-          ranges:
-            nextRanges.length > 0
-              ? nextRanges
-              : [{ start: "09:00", end: "18:00" }],
+          ranges: nextRanges.length > 0 ? nextRanges : [createDefaultRange()],
         };
       }),
+    }));
+  };
+
+  const setAllDaysEnabled = (enabled) => {
+    setTemplateForm((prev) => ({
+      ...prev,
+      days: prev.days.map((day) => ({
+        ...day,
+        enabled,
+        ranges: day.ranges?.length > 0 ? day.ranges : [createDefaultRange()],
+      })),
     }));
   };
 
@@ -388,7 +413,7 @@ const Schedule = ({ profesionalSelect }) => {
   const addExceptionRange = () => {
     setExceptionForm((prev) => ({
       ...prev,
-      ranges: [...prev.ranges, { start: "09:00", end: "18:00" }],
+      ranges: [...prev.ranges, createDefaultRange()],
     }));
   };
 
@@ -397,10 +422,7 @@ const Schedule = ({ profesionalSelect }) => {
       const nextRanges = prev.ranges.filter((_, rangeIndex) => rangeIndex !== index);
       return {
         ...prev,
-        ranges:
-          nextRanges.length > 0
-            ? nextRanges
-            : [{ start: "09:00", end: "18:00" }],
+        ranges: nextRanges.length > 0 ? nextRanges : [createDefaultRange()],
       };
     });
   };
@@ -463,6 +485,16 @@ const Schedule = ({ profesionalSelect }) => {
     setLegacySelectedOptions((prev) => prev.filter((slot) => slot !== slotValue));
   };
 
+  const selectAllLegacySlots = () => {
+    setLegacySlots(SLOT_OPTIONS.map((slot) => ({ hora: slot, stock: true })));
+    setLegacySelectedOptions(SLOT_OPTIONS);
+  };
+
+  const clearAllLegacySlots = () => {
+    setLegacySlots([]);
+    setLegacySelectedOptions([]);
+  };
+
   const handleLegacySave = async (event) => {
     event.preventDefault();
 
@@ -497,16 +529,32 @@ const Schedule = ({ profesionalSelect }) => {
 
   return (
     <div className="my-12 space-y-8">
+      <div className="rounded bg-blue-50 border border-blue-200 p-5 mb-2">
+        <h2 className="text-lg font-semibold text-blue-900 mb-2">
+          ¿Como funciona tu agenda?
+        </h2>
+        <ol className="list-decimal list-inside text-sm text-blue-800 space-y-1">
+          <li><strong>Agenda semanal base:</strong> Configura tus dias y horarios de trabajo una sola vez. Se repite automaticamente todas las semanas, no necesitas cargar dia por dia.</li>
+          <li><strong>Duracion del turno:</strong> Elige cuanto dura cada turno (30 min, 1 hora, 4 horas, etc). El sistema divide tu jornada en turnos de esa duracion.</li>
+          <li><strong>Excepciones:</strong> Si tenes vacaciones, un dia libre o un horario especial, registralo como excepcion sin modificar tu agenda base.</li>
+          <li><strong>Agenda diaria (opcional):</strong> Solo si necesitas sobrescribir un dia puntual que no encaja en tu agenda semanal ni en excepciones.</li>
+        </ol>
+        <p className="mt-2 text-xs text-blue-600">
+          Ejemplo: Si trabajas lunes a viernes de 8:00 a 17:00 con turnos de 2 horas, configura la agenda semanal una vez y listo. Si el proximo jueves no trabajas, agrega una excepcion tipo "Dia no disponible".
+        </p>
+      </div>
+
       <div className="grid gap-8 lg:grid-cols-2">
         <section className="rounded bg-white p-6 shadow">
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-slate-900">
-              Agenda semanal base
+              Paso 1 — Agenda semanal base
             </h2>
             <p className="mt-2 text-sm text-slate-600">
-              Define una sola vez los dias y rangos en que el profesional puede
-              trabajar. Luego la disponibilidad efectiva se calcula con
-              excepciones y ordenes ya ocupadas.
+              Configura una sola vez tus dias y horarios de trabajo. Esta agenda
+              se repite automaticamente cada semana, asi no tenes que cargar tus
+              horarios todos los dias. Solo volveras aqui si cambia tu rutina
+              habitual.
             </p>
           </div>
 
@@ -542,8 +590,11 @@ const Schedule = ({ profesionalSelect }) => {
                   }
                   className="w-full rounded border border-slate-300 px-3 py-2"
                 >
-                  <option value={30}>30 minutos</option>
-                  <option value={60}>60 minutos</option>
+                  {SLOT_DURATION_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
                 </select>
               </label>
               <label className="block">
@@ -565,6 +616,22 @@ const Schedule = ({ profesionalSelect }) => {
               </label>
             </div>
             <div className="space-y-4">
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => setAllDaysEnabled(true)}
+                  className="rounded border border-slate-300 px-3 py-2 text-sm text-slate-700"
+                >
+                  Activar todos los dias
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAllDaysEnabled(false)}
+                  className="rounded border border-slate-300 px-3 py-2 text-sm text-slate-700"
+                >
+                  Desactivar todos los dias
+                </button>
+              </div>
               {templateForm.days.map((day) => (
                 <div
                   key={day.dayOfWeek}
@@ -867,6 +934,22 @@ const Schedule = ({ profesionalSelect }) => {
           </div>
           {legacyDateInput && (
             <div className="space-y-4">
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={selectAllLegacySlots}
+                  className="rounded border border-slate-300 px-3 py-2 text-sm text-slate-700"
+                >
+                  Seleccionar todos los horarios
+                </button>
+                <button
+                  type="button"
+                  onClick={clearAllLegacySlots}
+                  className="rounded border border-slate-300 px-3 py-2 text-sm text-slate-700"
+                >
+                  Limpiar horarios
+                </button>
+              </div>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {SLOT_OPTIONS.map((slot) => (
                   <label

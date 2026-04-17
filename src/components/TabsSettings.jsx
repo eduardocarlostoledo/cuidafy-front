@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import { GiSettingsKnobs } from "react-icons/gi";
-import { CiViewList } from "react-icons/ci";
+import {
+  AiFillCalendar,
+  AiFillClockCircle,
+  AiOutlineUnorderedList,
+} from "react-icons/ai";
 import { MdDirections, MdFavorite } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { AiFillCalendar, AiFillClockCircle } from "react-icons/ai";
 import RoleGuardComponent from "../guards/RoleGuardComponent";
 import { ROLES } from "../helpers/Logic/roles";
-import {FaPeopleArrows} from "react-icons/fa"
+import { FaPeopleArrows } from "react-icons/fa";
 
 const TabsSettings = () => {
   let location = useLocation();
-
-  const { user } = useSelector((state) => ({ ...state.auth }));
 
   return (
     <div className="border-b border-gray-200">
@@ -58,7 +58,7 @@ const TabsSettings = () => {
                     : "hover:text-gray-600 hover:border-gray-300"
                 }`}
               >
-                <CiViewList className="mr-2 w-5 h-5" />
+                <AiOutlineUnorderedList className="mr-2 w-5 h-5" />
                 Casos
               </Link>
             </li>
@@ -72,7 +72,7 @@ const TabsSettings = () => {
                   : "hover:text-gray-600 hover:border-gray-300"
               }`}
             >
-              <CiViewList className="mr-2 w-5 h-5" />
+              <AiOutlineUnorderedList className="mr-2 w-5 h-5" />
               Historial de servicios
             </Link>
           </li>
@@ -117,7 +117,7 @@ const TabsSettings = () => {
                     : "hover:text-gray-600 hover:border-gray-300"
                 }`}
               >
-                <CiViewList className="mr-2 w-5 h-5" />
+                <AiOutlineUnorderedList className="mr-2 w-5 h-5" />
                 Inbox
               </Link>
             </li>
@@ -131,7 +131,7 @@ const TabsSettings = () => {
                   : "hover:text-gray-600 hover:border-gray-300"
               }`}
             >
-              <CiViewList className="mr-2 w-5 h-5" />
+              <AiOutlineUnorderedList className="mr-2 w-5 h-5" />
               Historial de servicios
             </Link>
           </li>
@@ -173,7 +173,7 @@ const TabsSettings = () => {
                   : "hover:text-gray-600 hover:border-gray-300"
               }`}
             >
-              <CiViewList className="mr-2 w-5 h-5" />
+              <AiOutlineUnorderedList className="mr-2 w-5 h-5" />
               Perfil Profesional
             </Link>
           </li>

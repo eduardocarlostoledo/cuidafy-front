@@ -35,6 +35,13 @@ const PREFERENCE_PRESETS = [
 
 const LOCATION_STORAGE_KEY = "preferred_localidad";
 const PRESET_STORAGE_KEY = "preferred_care_preset";
+const URGENCY_STORAGE_KEY = "preferred_care_urgency";
+
+const URGENCY_OPTIONS = [
+  { id: "hoy", label: "Lo necesito hoy" },
+  { id: "semana", label: "Esta semana" },
+  { id: "planificado", label: "Lo estoy organizando" },
+];
 
 const normalizeText = (value = "") =>
   String(value)
@@ -66,6 +73,7 @@ const Home = () => {
   const { disponibilidades, loading, error } = useDisponibilidades();
   const [selectedLocalidad, setSelectedLocalidad] = useState("");
   const [selectedPreset, setSelectedPreset] = useState(PREFERENCE_PRESETS[0].id);
+  const [selectedUrgency, setSelectedUrgency] = useState("hoy");
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [locationHint, setLocationHint] = useState("");
   const [profile, setProfile] = useState(null);
@@ -73,6 +81,7 @@ const Home = () => {
   useEffect(() => {
     const storedLocalidad = localStorage.getItem(LOCATION_STORAGE_KEY) || "";
     const storedPreset = localStorage.getItem(PRESET_STORAGE_KEY) || "";
+    const storedUrgency = localStorage.getItem(URGENCY_STORAGE_KEY) || "";
 
     setProfile(getProfile());
 
@@ -82,6 +91,10 @@ const Home = () => {
 
     if (storedPreset) {
       setSelectedPreset(storedPreset);
+    }
+
+    if (storedUrgency) {
+      setSelectedUrgency(storedUrgency);
     }
   }, []);
 
@@ -181,13 +194,20 @@ const Home = () => {
       .slice(0, 8);
   }, [groupedAvailability, selectedLocalidad]);
 
-  const persistPreferences = (localidad = selectedLocalidad, preset = selectedPreset) => {
+  const persistPreferences = (
+    localidad = selectedLocalidad,
+    preset = selectedPreset,
+    urgency = selectedUrgency
+  ) => {
     if (localidad) {
       localStorage.setItem(LOCATION_STORAGE_KEY, localidad);
       localStorage.setItem("localidad", localidad);
     }
     if (preset) {
       localStorage.setItem(PRESET_STORAGE_KEY, preset);
+    }
+    if (urgency) {
+      localStorage.setItem(URGENCY_STORAGE_KEY, urgency);
     }
   };
 
@@ -261,29 +281,26 @@ const Home = () => {
   };
 
   const handleViewService = (specialty, localidad) => {
-    persistPreferences(localidad, selectedPreset);
+    persistPreferences(localidad, selectedPreset, selectedUrgency);
     const params = new URLSearchParams({
       preset: selectedPreset,
       localidad,
+      urgency: selectedUrgency,
       especialidad: specialty,
     });
 
-    navigate(`/cuidado/matches?${params.toString()}`);
+    navigate(`/encontrar-cuidado?${params.toString()}`);
   };
 
   const handleSeeRecommendations = () => {
     persistPreferences();
 
-    if (recommendedServices.length > 0) {
-      const params = new URLSearchParams({
-        preset: selectedPreset,
-        localidad: selectedLocalidad || "",
-      });
-      navigate(`/encontrar-cuidado?${params.toString()}`);
-      return;
-    }
-
-    navigate("/encontrar-cuidado");
+    const params = new URLSearchParams({
+      preset: selectedPreset,
+      localidad: selectedLocalidad || "",
+      urgency: selectedUrgency,
+    });
+    navigate(`/encontrar-cuidado?${params.toString()}`);
   };
 
   return (
@@ -469,6 +486,31 @@ const Home = () => {
                             </div>
                             {selected && <CheckCircleOutlined className="text-[#9a6c22]" />}
                           </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="mt-6">
+                  <p className="mb-3 text-sm font-semibold text-slate-700">
+                    ¿Con qué urgencia?
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {URGENCY_OPTIONS.map((option) => {
+                      const active = option.id === selectedUrgency;
+                      return (
+                        <button
+                          key={option.id}
+                          type="button"
+                          onClick={() => setSelectedUrgency(option.id)}
+                          className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                            active
+                              ? "bg-[#7c5a23] text-white"
+                              : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                          }`}
+                        >
+                          {option.label}
                         </button>
                       );
                     })}

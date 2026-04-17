@@ -1,7 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { FaRegStar, FaStar } from "react-icons/fa";
 import CareFlowFrame from "../../components/care/CareFlowFrame";
 import { useDisponibilidades } from "../../hooks/useDisponibilidades";
+import clienteAxios from "../../config/axios";
+import { getAuthToken, getStoredProfile } from "../../helpers/auth/getSessionData";
 import {
   buildCareMatches,
   getNeedOptionById,
@@ -10,6 +13,18 @@ import {
   saveCareSelection,
   toggleShortlistItem,
 } from "../../helpers/careFlow";
+
+const renderStars = (value = 0, size = "text-base") =>
+  Array.from({ length: 5 }, (_, index) => {
+    const Icon = index < value ? FaStar : FaRegStar;
+
+    return (
+      <Icon
+        key={`${size}-${index}`}
+        className={`${size} ${index < value ? "text-amber-400" : "text-slate-300"}`}
+      />
+    );
+  });
 
 const formatSlotDayLabel = (dateString) => {
   if (!dateString) return "Dia sin fecha";
@@ -27,7 +42,21 @@ const CaregiverProfile = () => {
   const navigate = useNavigate();
   const { disponibilidades, loading } = useDisponibilidades();
   const [shortlistIds, setShortlistIds] = useState(() => getStoredShortlist());
+  const [ratingsData, setRatingsData] = useState({
+    averageRating: 0,
+    totalRatings: 0,
+    canReview: false,
+    userHasContracted: false,
+    userRating: null,
+  });
+  const [ratingsLoading, setRatingsLoading] = useState(true);
+  const [ratingValue, setRatingValue] = useState(0);
+  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
+  const [ratingError, setRatingError] = useState("");
   const request = getStoredCareRequest();
+  const token = getAuthToken();
+  const sessionProfile = getStoredProfile();
+  const isCustomer = sessionProfile?.rol === "CLIENTE";
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -51,6 +80,53 @@ const CaregiverProfile = () => {
       setSelectedSlotId(caregiver.nextSlot.horarioId);
     }
   }, [caregiver]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchRatings = async () => {
+      if (!id) return;
+
+      try {
+        setRatingsLoading(true);
+
+        const { data } = await clienteAxios.get(`/api/profesional/calificaciones/${id}`, {
+          headers: token
+            ? {
+                Authorization: `Bearer ${token}`,
+              }
+            : undefined,
+        });
+
+        if (cancelled) return;
+
+        setRatingsData({
+          averageRating: Number(data?.averageRating || 0),
+          totalRatings: Number(data?.totalRatings || 0),
+          canReview: Boolean(data?.canReview),
+          userHasContracted: Boolean(data?.userHasContracted),
+          userRating: data?.userRating || null,
+        });
+        setRatingValue(Number(data?.userRating?.score || 0));
+        setRatingError("");
+      } catch (error) {
+        if (cancelled) return;
+        setRatingError(
+          error.response?.data?.msg || "No pudimos cargar las calificaciones del profesional"
+        );
+      } finally {
+        if (!cancelled) {
+          setRatingsLoading(false);
+        }
+      }
+    };
+
+    fetchRatings();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id, token]);
 
   const selectedSlot =
     caregiver?.slots.find((slot) => slot.horarioId === selectedSlotId) || caregiver?.nextSlot;
@@ -91,8 +167,43 @@ const CaregiverProfile = () => {
     navigate("/cuidado/confirmar");
   };
 
+  const handleSubmitRating = async () => {
+    if (!ratingsData.canReview || ratingValue < 1 || ratingValue > 5) return;
+
+    try {
+      setIsSubmittingRating(true);
+      setRatingError("");
+
+      const { data } = await clienteAxios.post(
+        `/api/profesional/calificaciones/${id}`,
+        { score: ratingValue },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setRatingsData({
+        averageRating: Number(data?.averageRating || 0),
+        totalRatings: Number(data?.totalRatings || 0),
+        canReview: Boolean(data?.canReview),
+        userHasContracted: Boolean(data?.userHasContracted),
+        userRating: data?.userRating || { score: ratingValue },
+      });
+      setRatingValue(Number(data?.userRating?.score || ratingValue));
+    } catch (error) {
+      setRatingError(
+        error.response?.data?.msg || "No pudimos guardar la calificacion del profesional"
+      );
+    } finally {
+      setIsSubmittingRating(false);
+    }
+  };
+
   const shortlisted = caregiver ? shortlistIds.includes(caregiver.id) : false;
   const selectedNeed = getNeedOptionById(request.needType);
+  const canSubmitRating = ratingsData.canReview && ratingValue >= 1 && ratingValue <= 5;
 
   const sidebar = caregiver ? (
     <>
@@ -190,8 +301,31 @@ const CaregiverProfile = () => {
                     {caregiver.nombreCompleto}
                   </h2>
                   <p className="mt-2 text-sm text-slate-600">
-                    {caregiver.localidades.join(" · ")}
+                    {caregiver.localidades.join(" / ")}
                   </p>
+                  <div className="mt-4 rounded-[1.25rem] border border-[#eadcc8] bg-[#fffaf2] px-4 py-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7d5a21]">
+                      Calificaciones
+                    </p>
+                    {ratingsLoading ? (
+                      <p className="mt-2 text-sm text-slate-500">Cargando promedio...</p>
+                    ) : (
+                      <div className="mt-2 flex flex-wrap items-center gap-3">
+                        <div className="flex items-center gap-1">
+                          {renderStars(Math.round(ratingsData.averageRating), "text-lg")}
+                        </div>
+                        <p className="text-sm font-semibold text-slate-900">
+                          {ratingsData.totalRatings > 0
+                            ? `${ratingsData.averageRating.toFixed(1)} de 5`
+                            : "Sin calificaciones aun"}
+                        </p>
+                        <p className="text-sm text-slate-500">
+                          {ratingsData.totalRatings} opinion
+                          {ratingsData.totalRatings === 1 ? "" : "es"}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                   <div className="mt-4 flex flex-wrap gap-2">
                     {caregiver.especialidades.map((especialidad) => (
                       <span
@@ -234,6 +368,81 @@ const CaregiverProfile = () => {
                   {caregiver.descripcion ||
                     "Todavia no hay una descripcion larga cargada para este perfil. Igual mostramos disponibilidad real, zonas de trabajo y especialidades para ayudarte a decidir mejor."}
                 </p>
+              </div>
+            </div>
+
+            <div className="mt-6 rounded-[1.5rem] bg-[#fcfaf7] p-5">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">Tu calificacion</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                    Solo clientes que hayan contratado el servicio pueden dejar una nota de 1 a 5
+                    estrellas.
+                  </p>
+                </div>
+                {ratingsData.userRating ? (
+                  <span className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#7c5a23]">
+                    Tu ultima nota: {ratingsData.userRating.score}/5
+                  </span>
+                ) : null}
+              </div>
+
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                {Array.from({ length: 5 }, (_, index) => {
+                  const starValue = index + 1;
+                  const active = starValue <= ratingValue;
+
+                  return (
+                    <button
+                      key={`rate-${starValue}`}
+                      type="button"
+                      onClick={() => {
+                        if (ratingsData.canReview) {
+                          setRatingValue(starValue);
+                        }
+                      }}
+                      disabled={!ratingsData.canReview}
+                      className={`rounded-full p-1 ${
+                        ratingsData.canReview ? "cursor-pointer" : "cursor-not-allowed"
+                      }`}
+                    >
+                      {active ? (
+                        <FaStar className="text-2xl text-amber-400" />
+                      ) : (
+                        <FaRegStar className="text-2xl text-slate-300" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {!ratingsLoading && !ratingsData.canReview ? (
+                <p className="mt-4 text-sm text-slate-500">
+                  {!token
+                    ? "Inicia sesion con tu cuenta cliente para ver si puedes calificar."
+                    : isCustomer && !ratingsData.userHasContracted
+                    ? "Todavia no tienes una contratacion valida con este profesional para poder calificarlo."
+                    : "Solo una cuenta cliente con una contratacion valida puede dejar una calificacion."}
+                </p>
+              ) : null}
+
+              {ratingError ? (
+                <p className="mt-4 text-sm font-medium text-red-600">{ratingError}</p>
+              ) : null}
+
+              <div className="mt-5">
+                <button
+                  type="button"
+                  onClick={handleSubmitRating}
+                  disabled={!canSubmitRating || isSubmittingRating}
+                  className="rounded-full bg-[#7c5a23] px-5 py-3 text-sm font-semibold text-white hover:bg-[#604318] disabled:cursor-not-allowed disabled:bg-slate-300"
+                >
+                  {isSubmittingRating
+                    ? "Guardando calificacion..."
+                    : ratingsData.userRating
+                    ? "Actualizar calificacion"
+                    : "Enviar calificacion"}
+                </button>
               </div>
             </div>
           </section>

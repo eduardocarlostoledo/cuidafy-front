@@ -29,7 +29,7 @@ const Fidelidad = () => {
                   <div role="cell" className="bg-gray-50">
                     <div className="bg-gray-50 p-5 rounded-md relative h-full w-full">
                       <h1 className="pb-4 text-2xl font-semibold">
-                        Fidelidad Calyaan
+                        Fidelidad Cuidafy
                       </h1>
                       <div className="my-5">
                         <h4 className="text-md text-gray-900  mb-3">

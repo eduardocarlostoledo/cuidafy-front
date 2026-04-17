@@ -1057,7 +1057,7 @@ const orderDate = moment(orden?.cita_servicio, "YYYY/MM/DD");
             Profesional: <b>{selectedRowsPorcProfesional}</b>
           </p>
           <p>
-            Calyaan: <b>{selectedRowsPorcCaalyan}</b>
+            Cuidafy: <b>{selectedRowsPorcCaalyan}</b>
           </p>
           <Button onClick={handleEditModalOpen} style={{ margin: ".5rem" }}>
             Editar Filas Seleccionadas
@@ -1250,7 +1250,7 @@ const orderDate = moment(orden?.cita_servicio, "YYYY/MM/DD");
               Profesional: <b>{selectedRowsPorcProfesional}</b>
             </p>
             <p>
-              Calyaan: <b>{selectedRowsPorcCaalyan}</b>
+              Cuidafy: <b>{selectedRowsPorcCaalyan}</b>
             </p>
           </div>
         </Modal>

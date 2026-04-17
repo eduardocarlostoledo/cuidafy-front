@@ -133,10 +133,10 @@ const Footer = () => {
                 <li>
                   <a
                     className="flex items-center justify-center gap-1.5 sm:justify-start"
-                    href="mailto:info@toledoconsultora.com"
+                    href="mailto:info.cuidafy@gmail.com"
                   >
                     <HiOutlineMail className="h-5 w-5 shrink-0" />
-                    <span>info@toledoconsultora.com</span>
+                    <span>info.cuidafy@gmail.com</span>
                   </a>
                 </li>
 

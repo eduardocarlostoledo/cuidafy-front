@@ -14,7 +14,6 @@ import { updateProfile } from "../../../../redux/features/professionalSlice";
 const FormUpdateProfile = () => {
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => ({ ...state.auth }));
   const { loadingProfessional, errorProfessional } = useSelector((state) => ({
     ...state.professional,
   }));
@@ -35,7 +34,7 @@ const FormUpdateProfile = () => {
   const [image, setImage] = useState(null);
   const [loadingImage, setLoadingImage] = useState(false);
 
-  const { especialidad, descripcion, areasLaborales } = valueForm;
+  const { especialidad, descripcion } = valueForm;
 
   useEffect(() => {
     const getEspecialidades = async () => {
@@ -60,11 +59,15 @@ const FormUpdateProfile = () => {
         setLoadingImage(true);
         let { data } = await clienteAxios.get(`/api/profesional/perfil`);
 
-        const { descripcion, especialidad, localidadesLaborales } = data.profesional;
+        const {
+          descripcion,
+          especialidad,
+          localidadesLaborales = [],
+        } = data.profesional;
 
         setLoadingImage(false);
-        setValueForm({ ...valueForm, descripcion });
-        setEspecialidadForm(especialidad);
+        setValueForm((prev) => ({ ...prev, descripcion }));
+        setEspecialidadForm(especialidad || []);
         setLocalidadForm(localidadesLaborales);
 
         if (data?.img) {
@@ -151,6 +154,21 @@ const FormUpdateProfile = () => {
     setLocationSelectorKey((prev) => prev + 1);
   };
 
+  const refreshProfile = async () => {
+    try {
+      const { data } = await clienteAxios.get(`/api/profesional/perfil`);
+      const {
+        descripcion,
+        especialidad,
+        localidadesLaborales = [],
+      } = data.profesional;
+      setValueForm((prev) => ({ ...prev, descripcion }));
+      setEspecialidadForm(especialidad || []);
+      setLocalidadForm(localidadesLaborales);
+      if (data?.img) setImage(data.img);
+    } catch (err) {}
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -166,7 +184,10 @@ const FormUpdateProfile = () => {
       localidades: localidadForm,
     };
 
-    dispatch(updateProfile({ dataP, toast }));
+    try {
+      await dispatch(updateProfile({ dataP, toast })).unwrap();
+      await refreshProfile();
+    } catch (err) {}
   };
 
   return (

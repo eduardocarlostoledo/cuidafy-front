@@ -55,7 +55,7 @@ const OrderDetails = () => {
                                             Correo
                                         </td> 
                                         <td className="py-3 text-end">
-                                            <a href="mailto:support@mail.com">info@toledoconsultora.com</a>
+                                            <a href="mailto:support@mail.com">info.cuidafy@gmail.com</a>
                                         </td>
                                     </tr>
                                     <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
@@ -169,7 +169,7 @@ const OrderDetails = () => {
                                             Correo
                                         </td>
                                         <td className="py-3 text-end">
-                                            <a href="mailto:support@mail.com">info@toledoconsultora.com</a>
+                                            <a href="mailto:support@mail.com">info.cuidafy@gmail.com</a>
                                         </td>
                                     </tr>
                                     <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
@@ -213,7 +213,7 @@ const OrderDetails = () => {
                                             Estado
                                         </td>
                                         <td className="py-3 text-end">
-                                            <a href="mailto:support@mail.com">info@toledoconsultora.com</a>
+                                            <a href="mailto:support@mail.com">info.cuidafy@gmail.com</a>
                                         </td>
                                     </tr>
                                     <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">

@@ -274,9 +274,6 @@ const CreateReservation = () => {
 
   async function procesarPreferencias(reservaRequest) {
 
-    const producto = servicios[0].nombre;
-    const precio = servicios[0].valorTotal || servicios[0].precio;
-
     const respuesta1 = await axios.post(
       `${import.meta.env.VITE_APP_BACK}/api/pay/preference-manual`,
       reservaRequest
@@ -287,43 +284,13 @@ const CreateReservation = () => {
     setIDOrder(datos1.order)
 
     if (reservaRequest.metodo_pago !== "Externo") {
-
       const respuesta2 = await axios.post(
-        "https://api.mercadopago.com/checkout/preferences",
-        {
-          items: [
-            {
-              title: producto,
-              unit_price: Number(precio),
-              quantity: 1,
-            },
-          ],
-          back_urls: {
-            success: `${import.meta.env.VITE_APP_BACK}/api/pay/feedback/success/manual`,
-            failure: `${import.meta.env.VITE_APP_BACK}/api/pay/feedback/failure/manual`,
-            pending: `${import.meta.env.VITE_APP_BACK}/api/pay/feedback/pending/manual`,
-          },
-          auto_return: "approved",
-          payment_methods: {
-            excluded_payment_types: [
-              { id: "ticket" },
-              { id: "bank_transfer" },
-            ],
-          },
-          statement_descriptor: "CUIDAFY",
-          external_reference: datos1.factura,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_APP_MERCADOPAGO_ACCESS_TOKEN}`,
-          },
-        }
+        `${import.meta.env.VITE_APP_BACK}/api/pay/create_preference/${datos1.factura}`
       );
 
       const datos2 = respuesta2.data;
 
-      setLinkPago(datos2.init_point);
+      setLinkPago(datos2.sandbox_init_point || datos2.init_point || "");
     }
   }
 

@@ -192,6 +192,42 @@ export const normalizeText = (value = "") =>
     .replace(/[\u0300-\u036f]/g, "")
     .trim();
 
+const normalizeLocalityPath = (value = "") =>
+  normalizeText(value)
+    .split(">")
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+
+export const localityMatchesRequest = (
+  profileLocalities = [],
+  requestedLocality = ""
+) => {
+  if (!requestedLocality) return true;
+
+  const requestedPath = normalizeLocalityPath(requestedLocality);
+  if (requestedPath.length === 0) return true;
+
+  return profileLocalities.some((locality) => {
+    const localityPath = normalizeLocalityPath(locality);
+    if (localityPath.length === 0) return false;
+
+    const sharedLength = Math.min(requestedPath.length, localityPath.length);
+    const sharesPathPrefix = requestedPath
+      .slice(0, sharedLength)
+      .every((segment, index) => segment === localityPath[index]);
+
+    if (sharesPathPrefix) return true;
+
+    const normalizedRequested = requestedPath.join(" > ");
+    const normalizedLocality = localityPath.join(" > ");
+
+    return (
+      normalizedLocality.includes(normalizedRequested) ||
+      normalizedRequested.includes(normalizedLocality)
+    );
+  });
+};
+
 export const mergeCareRequest = (...sources) =>
   sources.reduce(
     (accumulator, source) => ({
@@ -482,14 +518,20 @@ const buildMatchReasons = (match, request) => {
   return reasons.slice(0, 3);
 };
 
+export const getTodayIso = () => new Date().toISOString().slice(0, 10);
+
 export const buildCareMatches = (disponibilidades = [], request = DEFAULT_CARE_REQUEST) => {
   const normalizedLocalidad = normalizeText(request.localidad);
   const groupedMatches = new Map();
+  const urgencyToday = request.urgency === "hoy";
+  const todayIso = getTodayIso();
 
   disponibilidades.forEach((disponibilidad) => {
     const profile = disponibilidad?.creador;
     const user = profile?.creador;
     if (!profile || !user) return;
+
+    if (urgencyToday && disponibilidad?.fecha !== todayIso) return;
 
     const localities = profile.localidadesLaborales || [];
     const specialties = profile.especialidad || [];
@@ -499,10 +541,7 @@ export const buildCareMatches = (disponibilidades = [], request = DEFAULT_CARE_R
 
     if (availableSlots.length === 0) return;
 
-    if (
-      normalizedLocalidad &&
-      !localities.some((locality) => normalizeText(locality) === normalizedLocalidad)
-    ) {
+    if (normalizedLocalidad && !localityMatchesRequest(localities, request.localidad)) {
       return;
     }
 

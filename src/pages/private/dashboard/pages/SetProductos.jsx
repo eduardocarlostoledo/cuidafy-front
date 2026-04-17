@@ -212,7 +212,7 @@ const SetProductos = () => {
       render: (text) => <Tag color="blue">{text}</Tag>,
     },
     {
-      title: "Calyaan %",
+      title: "Cuidafy %",
       dataIndex: "porcetajeCalyaan",
       key: "porcetajeCalyaan",
       width: 100,
@@ -353,7 +353,7 @@ const SetProductos = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <Form.Item
-              label="Porcentaje Calyaan (%)"
+              label="Porcentaje Cuidafy (%)"
               name="porcetajeCalyaan"
               initialValue={39}
               rules={[

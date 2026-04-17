@@ -14,7 +14,6 @@ import {
   AiOutlineClose,
   AiOutlineCheck,
   AiFillCloseCircle,
-  AiOutlineLoading3Quarters,
 } from "react-icons/ai";
 import { useDispatch } from "react-redux";
 import {
@@ -30,6 +29,7 @@ const ProfessionalProfile = () => {
   const [forEdit, setForEdit] = useState(false);
   const [cargando, setCargando] = useState(false);
 
+  const [changingRole, setChangingRole] = useState(false);
   const [valueForm, setValueForm] = useState({
     _id: "",
     nombre: "",
@@ -46,6 +46,9 @@ const ProfessionalProfile = () => {
     img: "",
     profesional: {},
     ultimaConexion: "",
+    rol: "",
+    localidad: "",
+    direccion: "",
   });
 
   const deleteUsuario = async (id) => {
@@ -93,11 +96,14 @@ const ProfessionalProfile = () => {
         img: data.img || "",
         profesional: data.profesional || {},
         ultimaConexion: data.ultimaConexion || "",
+        rol: data.rol || "PROFESIONAL",
+        localidad: data.direccionDefault?.localidad || "",
+        direccion: data.direccionDefault?.direccion || "",
       }));
       //console.log("data.profesional", data.profesional)
-      setDescriptionForm(data.profesional.descripcion);
-      setEspecialidadForm(data.profesional.especialidad);
-      setLocalidadForm(data.profesional.localidadesLaborales);
+      setDescriptionForm(data.profesional?.descripcion || "");
+      setEspecialidadForm(data.profesional?.especialidad || []);
+      setLocalidadForm(data.profesional?.localidadesLaborales || []);
     } catch (err) {
       const error =
         err.response?.data.msg || "Estamos experimentando problemas internos";
@@ -176,10 +182,25 @@ const ProfessionalProfile = () => {
         localidades: localidadForm,
       };
 
-      dispatch(updateProfileAdminDash({ valueForm, toast }));
-      dispatch(updateProfileAdmin({ dataP, toast }));
+      const userPayload = {
+        _id: valueForm._id,
+        nombre,
+        apellido,
+        email,
+        telefono: telefono || "",
+        cedula: cedula || "",
+        sexo: sexo || "",
+        localidad: valueForm.localidad || "",
+        direccion: valueForm.direccion || "",
+      };
+
+      await dispatch(
+        updateProfileAdminDash({ valueForm: userPayload, toast })
+      ).unwrap();
+      await dispatch(updateProfileAdmin({ dataP, toast })).unwrap();
+      await getUser();
       setForEdit(false);
-      toast.success("Enviando...");
+      toast.success("Perfil actualizado");
     } catch (error) {
       toast.error("Ha ocurrido un error al enviar los datos");
     }
@@ -263,6 +284,31 @@ const ProfessionalProfile = () => {
       // Mostrar Sweet Alert en caso de error
       swal("Error", "No se pudo confirmar el correo del profesional o el mismo ya se encuentra confirmado", "error");
       console.error("Error al confirmar el correo del profesional", error);
+    }
+  };
+
+  const handleChangeRole = async (nuevoRol) => {
+    if (!nuevoRol || nuevoRol === valueForm.rol) return;
+
+    const confirmacion = window.confirm(
+      `¿Cambiar rol de ${valueForm.rol} a ${nuevoRol}?`
+    );
+    if (!confirmacion) return;
+
+    setChangingRole(true);
+    try {
+      const { data } = await clienteAxios.put("api/usuarios/cambiar-rol", {
+        userId: valueForm._id,
+        nuevoRol,
+      });
+      toast.success(data.msg);
+      setValueForm((prev) => ({ ...prev, rol: nuevoRol }));
+    } catch (error) {
+      const errorMsg =
+        error.response?.data?.msg || "Error al cambiar el rol";
+      toast.error(errorMsg);
+    } finally {
+      setChangingRole(false);
     }
   };
 
@@ -387,6 +433,16 @@ const ProfessionalProfile = () => {
                 >
                   Cambiar contraseña
                 </button>
+                <select
+                  value={valueForm.rol}
+                  onChange={(e) => handleChangeRole(e.target.value)}
+                  disabled={changingRole || valueForm.rol === "SUPERADMIN"}
+                  className="focus:outline-none ml-5 border border-indigo-700 rounded px-3 md:px-6 py-2 text-sm bg-white text-gray-800"
+                >
+                  <option value="CLIENTE">Cliente</option>
+                  <option value="PROFESIONAL">Profesional</option>
+                  <option value="ADMIN">Administrador</option>
+                </select>
               </div>
             </div>
             <p className="text-gray-800  text-sm text-center w-full mt-4  leading-5">
@@ -560,7 +616,8 @@ const ProfessionalProfile = () => {
                 className="placeholder:text-sm placeholdertext-gray-500 focus:outline-none border border-gray-300 lg:min-w-[250px] w-full py-3 px-3 rounded mt-4"
                 name="localidad"
                 id="localidad"
-                value={direccionDefault.localidad}
+                value={valueForm.localidad}
+                onChange={handleChange}
                 disabled={!forEdit}
               >
                 <option value="">No registrado</option>
@@ -578,9 +635,10 @@ const ProfessionalProfile = () => {
               <p className="text-base leading-none text-gray-800">Dirección</p>
               <input
                 type="text"
-                name="cedula"
-                id="cedula"
-                value={direccionDefault.direccion}
+                name="direccion"
+                id="direccion"
+                value={valueForm.direccion}
+                onChange={handleChange}
                 placeholder="No registrado"
                 className="placeholder:text-sm placeholdertext-gray-500 focus:outline-none border border-gray-300 lg:min-w-[250px] w-full py-3 px-3 rounded mt-4"
                 disabled={!forEdit}
@@ -667,7 +725,7 @@ const ProfessionalProfile = () => {
                     </select>
                   </div>
                   <div className="flex gap-6 justify-center  flex-wrap lg:flex-col">
-                    {profesional?.especialidad?.length > 0 ? (
+                    {especialidadesForm.length > 0 ? (
                       <div className="my-4 flex flex-wrap gap-4">
                         {especialidadesForm.map((especialidad, index) => (
                           <p

@@ -113,10 +113,17 @@ const HistoryServices = () => {
   );
 }
 
+const ROLE_OPTIONS = [
+  { value: "CLIENTE", label: "Cliente" },
+  { value: "PROFESIONAL", label: "Profesional" },
+  { value: "ADMIN", label: "Administrador" },
+];
+
 const CustomerProfile = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const [forEdit, setForEdit] = useState(true);
+  const [changingRole, setChangingRole] = useState(false);
   const [valueForm, setValueForm] = useState({
     nombre: "",
     apellido: "",
@@ -131,6 +138,7 @@ const CustomerProfile = () => {
     reservas: [],
     estado: "",
     ultimaConexion: "",
+    rol: "",
   });
 
   const getUser = async () => {
@@ -148,6 +156,31 @@ const CustomerProfile = () => {
  
 console.log(valueForm)
 
+  const handleChangeRole = async (nuevoRol) => {
+    if (!nuevoRol || nuevoRol === valueForm.rol) return;
+
+    const confirmacion = window.confirm(
+      `¿Cambiar rol de ${valueForm.rol} a ${nuevoRol}?`
+    );
+    if (!confirmacion) return;
+
+    setChangingRole(true);
+    try {
+      const { data } = await clienteAxios.put("api/usuarios/cambiar-rol", {
+        userId: id,
+        nuevoRol,
+      });
+      toast.success(data.msg);
+      setValueForm((prev) => ({ ...prev, rol: nuevoRol }));
+    } catch (error) {
+      const errorMsg =
+        error.response?.data?.msg || "Error al cambiar el rol";
+      toast.error(errorMsg);
+    } finally {
+      setChangingRole(false);
+    }
+  };
+
   const {
     nombre,
     apellido,
@@ -163,6 +196,7 @@ console.log(valueForm)
     estado,
     confirmado,
     ultimaConexion,
+    rol,
   } = valueForm;
   console.log(valueForm);
   useEffect(() => {
@@ -307,6 +341,18 @@ console.log(valueForm)
                 >
                   Cambiar contraseña
                 </button>
+                <select
+                  value={rol}
+                  onChange={(e) => handleChangeRole(e.target.value)}
+                  disabled={changingRole || rol === "SUPERADMIN"}
+                  className="focus:outline-none ml-5 border border-indigo-700 rounded px-3 md:px-6 py-2 text-sm bg-white text-gray-800"
+                >
+                  {ROLE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
                 {telefono && (
                   <button className="focus:outline-none ml-0 md:ml-5 bg-indigo-700  transition duration-150 ease-in-out hover:bg-indigo-600 rounded text-white px-3 md:px-6 py-2 text-sm">
                     Mensaje
